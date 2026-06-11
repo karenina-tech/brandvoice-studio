@@ -3,6 +3,53 @@
 		"title": "BrandVoice Studio",
 		"tagline": "Authentic prompts for your handmade textile brand"
 	},
+	"wizard": {
+		"title": "How do you want to use BrandVoice Studio?",
+		"byok_card_title": "Bring Your Own Key",
+		"byok_card_badge": "Free",
+		"byok_card_subtitle": "For tech-savvy users",
+		"managed_card_title": "Credits Plan",
+		"managed_card_badge": "No setup",
+		"managed_card_subtitle": "Just create, we handle the rest",
+		"guide": {
+			"toggle": "Need help getting your free API key? View the step-by-step guide",
+			"title": "GET YOUR FREE GEMINI KEY STEP BY STEP",
+			"step1": {
+				"title": "Go to the platform",
+				"desc": "Open aistudio.google.com in your browser and sign in with your regular Gmail account."
+			},
+			"step2": {
+				"title": "Open the dashboard",
+				"desc": "In the dark left menu, click «Dashboard». This takes you straight to the API key management section."
+			},
+			"step3": {
+				"title": "Start creating",
+				"desc": "In the top right, find and click the highlighted button that says «Create API key»."
+			},
+			"step4": {
+				"title": "Configure the dialog box",
+				"desc": "A floating window called «Create a new key» will open:",
+				"sub1_label": "Assign a name",
+				"sub1_desc": "Type something simple to remember (for example: «My Key»).",
+				"sub2_label": "Choose a project",
+				"sub2_desc": "Don't worry about this! Google automatically creates a secure default project called «My First Project». It's already selected in the list. If you don't see a name, just click the dropdown and choose the option that appears.",
+				"reassurance": "You don't need to create anything extra! «My First Project» is already set up and pre-selected by Google. Just confirm it and continue."
+			},
+			"step5": {
+				"title": "Copy and save",
+				"desc": "Click «Create key». A long string of letters and numbers will appear — copy it completely, come back here, and paste it in the field below. We'll store it securely in your browser!"
+			}
+		},
+		"credits_title": "Your available credits",
+		"credits_display": "{{count}} credits",
+		"credits_display_one": "1 credit",
+		"credits_zero": "No credits available",
+		"credits_tagline": "We handle the technology so you can just create.",
+		"credits_recharge": "Recharge Credits",
+		"credits_recharge_soon": "Coming soon: Stripe Checkout integration",
+		"credits_loading": "Loading credits...",
+		"active_badge": "Active"
+	},
 	"settings": {
 		"button": "Settings",
 		"title": "AI Settings",
@@ -17,7 +64,7 @@
 		"key_placeholder_google": "AIza...",
 		"key_placeholder_openai": "sk-...",
 		"key_placeholder_anthropic": "sk-ant-...",
-		"save": "Save Settings",
+		"save": "Save & activate",
 		"saved": "Settings saved",
 		"remove": "Remove Settings",
 		"missing": "Configure your AI provider to continue.",
@@ -67,6 +114,7 @@
 		"network": "Could not connect to the server. Please check your connection.",
 		"rate_limit": "Too many requests. Please wait a few minutes and try again.",
 		"ai_service": "The AI service could not generate the prompt. Please try again.",
-		"generic": "Something went wrong. Please try again."
+		"generic": "Something went wrong. Please try again.",
+		"credits_exhausted": "Credits exhausted. Please recharge your balance or add an API key to continue."
 	}
 }

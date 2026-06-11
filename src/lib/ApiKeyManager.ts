@@ -1,9 +1,12 @@
 import { aiProviderSchema, aiApiKeySchema, AI_KEY_PATTERNS } from '@/lib/validation';
 import type { AiProvider } from '@/lib/validation';
 
+export type AppMode = 'byok' | 'managed';
+
 const STORAGE_KEYS = {
   provider: 'ai_provider',
   apiKey: 'ai_api_key',
+  mode: 'ai_mode',
 } as const;
 
 function safeLocalStorageRead(key: string, fallback: string): string {
@@ -21,6 +24,11 @@ export function readStoredProvider(): AiProvider {
 
 export function readStoredApiKey(): string {
   return safeLocalStorageRead(STORAGE_KEYS.apiKey, '');
+}
+
+export function readStoredMode(): AppMode {
+  const raw = safeLocalStorageRead(STORAGE_KEYS.mode, 'byok');
+  return raw === 'managed' ? 'managed' : 'byok';
 }
 
 export function validateApiSettings(provider: AiProvider, apiKey: string): boolean {
@@ -45,6 +53,14 @@ export function clearApiSettings(): void {
   try {
     localStorage.removeItem(STORAGE_KEYS.provider);
     localStorage.removeItem(STORAGE_KEYS.apiKey);
+  } catch {
+    // localStorage unavailable
+  }
+}
+
+export function persistMode(mode: AppMode): void {
+  try {
+    localStorage.setItem(STORAGE_KEYS.mode, mode);
   } catch {
     // localStorage unavailable
   }

@@ -3,6 +3,53 @@
 		"title": "BrandVoice Studio",
 		"tagline": "Prompts auténticos para tu marca textil artesanal"
 	},
+	"wizard": {
+		"title": "¿Cómo quieres usar BrandVoice Studio?",
+		"byok_card_title": "Trae tu propia Llave",
+		"byok_card_badge": "Gratis",
+		"byok_card_subtitle": "Para aventureros tech",
+		"managed_card_title": "Plan de Créditos",
+		"managed_card_badge": "Sin configuración",
+		"managed_card_subtitle": "Solo crea, nosotros nos encargamos",
+		"guide": {
+			"toggle": "¿Necesitas ayuda para conseguir tu llave gratis? Ver guía paso a paso",
+			"title": "CONSIGUE TU LLAVE GEMINI GRATIS PASO A PASO",
+			"step1": {
+				"title": "Entra a la plataforma",
+				"desc": "Ve a aistudio.google.com en tu navegador e inicia sesión con tu cuenta de Gmail habitual."
+			},
+			"step2": {
+				"title": "Abre el panel de control",
+				"desc": "En el menú oscuro de la izquierda, haz clic en «Dashboard». Esto te llevará directo a la sección de administración de tus llaves."
+			},
+			"step3": {
+				"title": "Inicia la creación",
+				"desc": "Arriba a la derecha, busca y haz clic en el botón destacado que dice «Crear clave de API» (o «Create API key»)."
+			},
+			"step4": {
+				"title": "Configura el cuadro de diálogo",
+				"desc": "Se abrirá una ventana flotante llamada «Crea una clave nueva»:",
+				"sub1_label": "Asigna un nombre",
+				"sub1_desc": "Escribe algo sencillo para recordar (por ejemplo: «Mi Llave»).",
+				"sub2_label": "Elige un proyecto",
+				"sub2_desc": "¡No te preocupes por esto! Google crea automáticamente un proyecto seguro por defecto llamado «My First Project». Ya viene seleccionado en la lista. Si no ves ningún nombre, haz clic en el desplegable y elige la opción que aparezca.",
+				"reassurance": "¡No necesitas crear nada extra! El proyecto «My First Project» ya está listo y preseleccionado por Google. Solo confírmalo y continúa."
+			},
+			"step5": {
+				"title": "Copia y guarda",
+				"desc": "Haz clic en «Crear clave». Verás una cadena larga de letras y números — cópiala por completo con el botón de copiar, regresa aquí y pégala en el campo de abajo. ¡La guardaremos de forma segura en tu navegador!"
+			}
+		},
+		"credits_title": "Tus créditos disponibles",
+		"credits_display": "{{count}} créditos",
+		"credits_display_one": "1 crédito",
+		"credits_zero": "Sin créditos disponibles",
+		"credits_tagline": "Nosotros nos encargamos de la tecnología, tú solo crea.",
+		"credits_recharge": "Recargar Créditos",
+		"credits_recharge_soon": "Próximamente: integración con Stripe Checkout",
+		"credits_loading": "Cargando créditos...",
+		"active_badge": "Activo"
+	},
 	"settings": {
 		"button": "Configuración",
 		"title": "Configuración de IA",
@@ -17,7 +64,7 @@
 		"key_placeholder_google": "AIza...",
 		"key_placeholder_openai": "sk-...",
 		"key_placeholder_anthropic": "sk-ant-...",
-		"save": "Guardar configuración",
+		"save": "Guardar y activar",
 		"saved": "Configuración guardada",
 		"remove": "Eliminar configuración",
 		"missing": "Configura tu proveedor de IA para continuar.",
@@ -67,6 +114,7 @@
 		"network": "No se pudo conectar con el servidor. Verifica tu conexión.",
 		"rate_limit": "Demasiadas solicitudes. Espera unos minutos e inténtalo de nuevo.",
 		"ai_service": "El servicio de IA no pudo generar el prompt. Por favor inténtalo de nuevo.",
-		"generic": "Algo salió mal. Por favor inténtalo de nuevo."
+		"generic": "Algo salió mal. Por favor inténtalo de nuevo.",
+		"credits_exhausted": "Créditos agotados. Por favor, recarga tu saldo o añade una clave API para continuar."
 	}
 }

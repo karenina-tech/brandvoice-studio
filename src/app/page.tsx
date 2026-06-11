@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useApiKey } from '@/hooks/useApiKey';
 import { SettingsPanel } from '@/components/SettingsPanel';
@@ -14,12 +14,29 @@ import type { BrandVoiceInput, BrandVoiceResponse } from '@/lib/validation';
 export default function Page() {
 	const { t } = useTranslation();
 	const aiSettings = useApiKey();
-	const { isSettingsValid } = aiSettings;
+	const { isSettingsValid, mode } = aiSettings;
 
 	const [settingsOpen, setSettingsOpen] = useState(false);
 	const [result, setResult] = useState<BrandVoiceResponse | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
 	const [errorMsg, setErrorMsg] = useState<string | null>(null);
+	const [managedCredits, setManagedCredits] = useState<number | null>(null);
+
+	// Fetch live credit count whenever the user is in managed mode
+	useEffect(() => {
+		if (mode !== 'managed') {
+			setManagedCredits(null);
+			return;
+		}
+		fetch('/api/credits')
+			.then((r) => (r.ok ? r.json() : null))
+			.then((data: { credits: number } | null) => {
+				if (data !== null && typeof data.credits === 'number') {
+					setManagedCredits(data.credits);
+				}
+			})
+			.catch(() => {});
+	}, [mode]);
 
 	async function handleSubmit(data: BrandVoiceInput) {
 		if (!isSettingsValid) {
@@ -31,19 +48,30 @@ export default function Page() {
 		setErrorMsg(null);
 		setResult(null);
 
-		const generated = await generatePrompt(data, aiSettings.provider, aiSettings.apiKey);
+		const generated = await generatePrompt(
+			data,
+			mode === 'managed'
+				? { mode: 'managed' }
+				: { mode: 'byok', provider: aiSettings.provider, apiKey: aiSettings.apiKey },
+		);
 
 		if (isErr(generated)) {
 			const error = generated[0];
 			if (isApiError(error)) {
 				if (error.statusCode === 429) setErrorMsg(t('errors.rate_limit'));
-				else if (error.statusCode === 502) setErrorMsg(t('errors.ai_service'));
+				else if (error.statusCode === 402) {
+					setErrorMsg(t('errors.credits_exhausted'));
+					setManagedCredits(0);
+				} else if (error.statusCode === 502) setErrorMsg(t('errors.ai_service'));
 				else setErrorMsg(error.message);
 			} else {
 				setErrorMsg(t('errors.network'));
 			}
 		} else {
 			setResult(generated[1]);
+			if (mode === 'managed') {
+				setManagedCredits((c) => (c !== null ? Math.max(0, c - 1) : null));
+			}
 		}
 
 		setIsLoading(false);
@@ -79,7 +107,8 @@ export default function Page() {
 			</header>
 
 			<main className='max-w-2xl mx-auto px-4 py-10 space-y-8'>
-				{!isSettingsValid && (
+				{/* BYOK mode — no key configured yet */}
+				{mode === 'byok' && !isSettingsValid && (
 					<div
 						role='alert'
 						className='bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-800 flex items-center gap-2'>
@@ -90,6 +119,22 @@ export default function Page() {
 								onClick={() => setSettingsOpen(true)}
 								className='font-semibold underline underline-offset-2 hover:no-underline'>
 								{t('settings.button')}
+							</button>
+						</span>
+					</div>
+				)}
+
+				{/* Managed mode — credits exhausted */}
+				{mode === 'managed' && managedCredits !== null && managedCredits <= 0 && (
+					<div
+						role='alert'
+						className='bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700 flex items-center gap-2'>
+						<span>
+							{t('errors.credits_exhausted')}{' '}
+							<button
+								onClick={() => setSettingsOpen(true)}
+								className='font-semibold underline underline-offset-2 hover:no-underline'>
+								{t('wizard.credits_recharge')}
 							</button>
 						</span>
 					</div>
@@ -119,7 +164,12 @@ export default function Page() {
 				)}
 			</main>
 
-			<SettingsPanel isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} hook={aiSettings} />
+			<SettingsPanel
+				isOpen={settingsOpen}
+				onClose={() => setSettingsOpen(false)}
+				hook={aiSettings}
+				credits={managedCredits}
+			/>
 		</div>
 	);
 }

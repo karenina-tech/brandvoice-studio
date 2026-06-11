@@ -1,15 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { brandVoiceRequestSchema } from '@/lib/validation';
+import { brandVoiceInputSchema, brandVoiceRequestSchema, aiProviderSchema } from '@/lib/validation';
+import type { BrandVoiceRequest, AiProvider } from '@/lib/validation';
 import { generateBrandVoicePrompt } from '@/lib/ai/generateBrandVoice';
 import { isErr, isOk } from '@/lib/result';
 import { isAiProviderError } from '@/lib/ai/errors';
 import { isAllowed } from '@/lib/server/RateLimiter';
 import type { RateRecord } from '@/lib/server/RateLimiter';
+import { checkUserCredits, decrementUserCredit } from '@/services/db-service';
 
 // Module-level Maps persist across requests on the same server process.
 // For horizontally-scaled deployments, replace with @upstash/ratelimit backed by Redis.
 const globalStore = new Map<string, RateRecord>();
 const routeStore = new Map<string, RateRecord>();
+
+function resolveProvider(raw: string): AiProvider {
+  const parsed = aiProviderSchema.safeParse(raw);
+  return parsed.success ? parsed.data : 'google';
+}
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const ip =
@@ -29,16 +36,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'Request body too large' }, { status: 413 });
   }
 
-  const provider = request.headers.get('x-ai-provider');
-  const apiKey = request.headers.get('x-ai-api-key');
-
-  if (!provider) {
-    return NextResponse.json({ error: 'Missing X-AI-Provider header' }, { status: 401 });
-  }
-  if (!apiKey) {
-    return NextResponse.json({ error: 'Missing X-AI-Api-Key header' }, { status: 401 });
-  }
-
   let body: unknown;
   try {
     body = await request.json();
@@ -46,32 +43,85 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
 
-  const validation = brandVoiceRequestSchema.safeParse({
-    ...(body as object),
-    provider,
-    apiKey,
-  });
-
-  if (!validation.success) {
+  // Validate body fields — common to both paths
+  const bodyValidation = brandVoiceInputSchema.safeParse(body);
+  if (!bodyValidation.success) {
     return NextResponse.json(
-      { error: 'Validation failed', details: validation.error.flatten() },
+      { error: 'Validation failed', details: bodyValidation.error.flatten() },
       { status: 400 },
     );
   }
 
-  const result = await generateBrandVoicePrompt(validation.data);
+  const clientApiKey = request.headers.get('x-ai-api-key');
 
-  if (isErr(result)) {
-    const error = result[0];
-    if (isAiProviderError(error)) {
-      return NextResponse.json({ error: error.message }, { status: 502 });
+  // ── Path A: BYOK — client supplies their own key ──────────────────────────────
+  if (clientApiKey) {
+    const clientProvider = request.headers.get('x-ai-provider');
+    if (!clientProvider) {
+      return NextResponse.json({ error: 'Missing X-AI-Provider header' }, { status: 400 });
     }
-    console.error('[generate] Unexpected error:', error.message);
+
+    const fullValidation = brandVoiceRequestSchema.safeParse({
+      ...bodyValidation.data,
+      provider: clientProvider,
+      apiKey: clientApiKey,
+    });
+    if (!fullValidation.success) {
+      return NextResponse.json(
+        { error: 'Invalid provider or API key', details: fullValidation.error.flatten() },
+        { status: 400 },
+      );
+    }
+
+    const result = await generateBrandVoicePrompt(fullValidation.data);
+    if (isErr(result)) {
+      const e = result[0];
+      if (isAiProviderError(e)) return NextResponse.json({ error: e.message }, { status: 502 });
+      console.error('[generate/byok] Unexpected error:', e.message);
+      return NextResponse.json({ error: 'An unexpected error occurred.' }, { status: 500 });
+    }
+    return NextResponse.json(isOk(result) ? result[1] : null, { status: 200 });
+  }
+
+  // ── Path B: Managed Credits — server uses master env-var key ─────────────────
+  const masterApiKey = process.env.MASTER_AI_API_KEY ?? '';
+  if (!masterApiKey) {
+    return NextResponse.json({ error: 'Service temporarily unavailable' }, { status: 503 });
+  }
+
+  const creditsResult = await checkUserCredits(ip);
+  if (isErr(creditsResult)) {
+    return NextResponse.json({ error: 'Service temporarily unavailable' }, { status: 503 });
+  }
+
+  const { credits } = creditsResult[1];
+  if (credits <= 0) {
     return NextResponse.json(
-      { error: 'An unexpected error occurred. Please try again.' },
-      { status: 500 },
+      {
+        error:
+          'Créditos agotados. Por favor, recarga tu saldo o añade una clave API para continuar.',
+      },
+      { status: 402 },
     );
   }
 
+  const masterProvider = resolveProvider(process.env.MASTER_AI_PROVIDER ?? 'google');
+  // Construct input with server-side keys — MASTER_AI_API_KEY is NEVER echoed in responses
+  const managedInput: BrandVoiceRequest = {
+    ...bodyValidation.data,
+    provider: masterProvider,
+    apiKey: masterApiKey,
+  };
+
+  const result = await generateBrandVoicePrompt(managedInput);
+  if (isErr(result)) {
+    const e = result[0];
+    if (isAiProviderError(e)) return NextResponse.json({ error: e.message }, { status: 502 });
+    console.error('[generate/managed] Unexpected error:', e.message);
+    return NextResponse.json({ error: 'An unexpected error occurred.' }, { status: 500 });
+  }
+
+  // Decrement only after confirmed successful generation — preserves credits on AI failures
+  await decrementUserCredit(ip);
   return NextResponse.json(isOk(result) ? result[1] : null, { status: 200 });
 }
