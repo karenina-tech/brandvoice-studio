@@ -1,0 +1,72 @@
+{
+	"app": {
+		"title": "BrandVoice Studio",
+		"tagline": "Authentic prompts for your handmade textile brand"
+	},
+	"settings": {
+		"button": "Settings",
+		"title": "AI Settings",
+		"description": "Your data is only stored in your browser and sent directly to the chosen AI provider. We never store it on our servers.",
+		"provider_label": "AI Provider",
+		"providers": {
+			"google": "Google (Gemini)",
+			"openai": "OpenAI (GPT-4o mini)",
+			"anthropic": "Anthropic (Claude Haiku)"
+		},
+		"key_label": "API Key",
+		"key_placeholder_google": "AIza...",
+		"key_placeholder_openai": "sk-...",
+		"key_placeholder_anthropic": "sk-ant-...",
+		"save": "Save Settings",
+		"saved": "Settings saved",
+		"remove": "Remove Settings",
+		"missing": "Configure your AI provider to continue.",
+		"format_hint_google": "Must start with «AIza» followed by 35 characters.",
+		"format_hint_openai": "Must start with «sk-».",
+		"format_hint_anthropic": "Must start with «sk-ant-»."
+	},
+	"form": {
+		"title": "Create your prompt",
+		"productName": {
+			"label": "Product Name",
+			"placeholder": "E.g: Star Muslin Blanket",
+			"hint": "Between 2 and 100 characters"
+		},
+		"fabricDetails": {
+			"label": "Fabric Details",
+			"placeholder": "E.g: Organic cotton muslin double layer, cream color with floral embroidery in camel tone",
+			"hint": "Describe textures, seams, colors and finishes (5–500 characters)"
+		},
+		"instagramVibe": {
+			"label": "Instagram Vibe / Occasion",
+			"placeholder": "E.g: Summer afternoon in the garden, intimate baby shower",
+			"hint": "The atmosphere or moment you want to convey (3–200 characters)"
+		},
+		"outputLanguage": {
+			"label": "Output Language",
+			"es": "Español",
+			"en": "English",
+			"pt": "Português",
+			"fr": "Français"
+		},
+		"submit": "Generate Prompt",
+		"submitting": "Generating..."
+	},
+	"output": {
+		"title": "Your generated prompt",
+		"caption_label": "Instagram Caption",
+		"prompt_label": "Image Generation Prompt",
+		"Prompt_caption": "Copy caption",
+		"Prompt_prompt": "Copy prompt",
+		"copied": "Copied!",
+		"regenerate": "Generate Again"
+	},
+	"errors": {
+		"api_key_missing": "AI settings missing. Go to Settings.",
+		"validation": "Please check the red-marked fields.",
+		"network": "Could not connect to the server. Please check your connection.",
+		"rate_limit": "Too many requests. Please wait a few minutes and try again.",
+		"ai_service": "The AI service could not generate the prompt. Please try again.",
+		"generic": "Something went wrong. Please try again."
+	}
+}

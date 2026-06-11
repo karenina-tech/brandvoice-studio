@@ -1,0 +1,72 @@
+{
+	"app": {
+		"title": "BrandVoice Studio",
+		"tagline": "Prompts auténticos para tu marca textil artesanal"
+	},
+	"settings": {
+		"button": "Configuración",
+		"title": "Configuración de IA",
+		"description": "Tus datos se guardan solo en tu navegador y se envían directamente al proveedor de IA elegido. Nunca los almacenamos en nuestros servidores.",
+		"provider_label": "Proveedor de IA",
+		"providers": {
+			"google": "Google (Gemini)",
+			"openai": "OpenAI (GPT-4o mini)",
+			"anthropic": "Anthropic (Claude Haiku)"
+		},
+		"key_label": "Clave de API",
+		"key_placeholder_google": "AIza...",
+		"key_placeholder_openai": "sk-...",
+		"key_placeholder_anthropic": "sk-ant-...",
+		"save": "Guardar configuración",
+		"saved": "Configuración guardada",
+		"remove": "Eliminar configuración",
+		"missing": "Configura tu proveedor de IA para continuar.",
+		"format_hint_google": "Debe comenzar con «AIza» seguido de 35 caracteres.",
+		"format_hint_openai": "Debe comenzar con «sk-».",
+		"format_hint_anthropic": "Debe comenzar con «sk-ant-»."
+	},
+	"form": {
+		"title": "Crea tu prompt",
+		"productName": {
+			"label": "Nombre del producto",
+			"placeholder": "Ej: Manta de Muselina Estrella",
+			"hint": "Entre 2 y 100 caracteres"
+		},
+		"fabricDetails": {
+			"label": "Detalles del tejido",
+			"placeholder": "Ej: Muselina de algodón orgánico doble capa, color crema con bordado floral en tono camel",
+			"hint": "Describe texturas, costuras, colores y acabados (5–500 caracteres)"
+		},
+		"instagramVibe": {
+			"label": "Vibe de Instagram / Ocasión",
+			"placeholder": "Ej: tarde de verano en el jardín, baby shower íntimo",
+			"hint": "El ambiente o momento que quieres transmitir (3–200 caracteres)"
+		},
+		"outputLanguage": {
+			"label": "Idioma de salida",
+			"es": "Español",
+			"en": "English",
+			"pt": "Português",
+			"fr": "Français"
+		},
+		"submit": "Generar prompt",
+		"submitting": "Generando..."
+	},
+	"output": {
+		"title": "Tu prompt generado",
+		"caption_label": "Caption de Instagram",
+		"prompt_label": "Prompt para generación de imagen",
+		"Prompt_caption": "Copiar caption",
+		"Prompt_prompt": "Copiar prompt",
+		"copied": "¡Copiado!",
+		"regenerate": "Generar de nuevo"
+	},
+	"errors": {
+		"api_key_missing": "Falta la configuración de IA. Ve a Configuración.",
+		"validation": "Por favor revisa los campos marcados en rojo.",
+		"network": "No se pudo conectar con el servidor. Verifica tu conexión.",
+		"rate_limit": "Demasiadas solicitudes. Espera unos minutos e inténtalo de nuevo.",
+		"ai_service": "El servicio de IA no pudo generar el prompt. Por favor inténtalo de nuevo.",
+		"generic": "Algo salió mal. Por favor inténtalo de nuevo."
+	}
+}
